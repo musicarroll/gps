@@ -41,7 +41,7 @@ else:
 
 if args.outfile is not None:
     out = open(args.outfile,'wt')
-    out.write('recnum,timestamp,PRN,x,y,z,t,v_x,v_y,v_z,v_t,\n')
+    out.write('recnum,timestamp,PRN,x,y,z,t,v_x,v_y,v_z,v_t\n')
 
 mismatch_count = 0
 rec_count = 0
