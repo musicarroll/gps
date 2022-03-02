@@ -48,5 +48,16 @@ def filter_df_for_prn(df, prn):
     prn_df = df[prn_filter]
     return prn_df
 
-
+def get_vec_diff(df1,df2):
+    x1 = np.array(df1['x'])
+    y1 = np.array(df1['y'])
+    z1 = np.array(df1['z'])
+    x2 = np.array(df2['x'])
+    y2 = np.array(df2['y'])
+    z2 = np.array(df2['z'])
+    dx = x1-x2
+    dy = y1-y2
+    dz = z1-z2
+    diff = np.array([dx,dy,dz]).reshape((len(x1),3))
+    return diff
     
