@@ -8,6 +8,7 @@ Created on Tue Mar  1 10:10:14 2022
 
 import re
 import pandas as pd
+import numpy as np
 p = re.compile(r'\s+')
 
 
@@ -31,3 +32,21 @@ def gen_csvrec(timestamp_str,p_rec,v_rec):
 
     return result, csvrec
         
+def get_df(filename):
+    # df = pd.read_csv(filename, index_col=['recnum','timestamp'],\
+    #                  parse_dates=['recnum','timestamp'],\
+    #                      infer_datetime_format=True,\
+    #                          keep_date_col=True)
+    df = pd.read_csv(filename)
+    df['r']= np.sqrt(df['x']**2+df['y']**2+df['z']**2)
+    return df
+#    df['timestamp']=pd.to_datetime(df['timestamp'])
+#    df.set_index('timestamp', inplace=True)
+
+def filter_df_for_prn(df, prn):
+    prn_filter = (df['PRN']==prn)
+    prn_df = df[prn_filter]
+    return prn_df
+
+
+    
