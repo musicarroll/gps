@@ -36,7 +36,8 @@ if args.prn is not None:
     predict_prn_df = predicts[predict_prn_filter]  # assert lengths of these are equal
     rtrue = np.array(prn_df_truth['r'])
     rpred = np.array(predict_prn_df['r'])
-    delta = rpred-rtrue
+    diff= su.get_vec_diff(predict_prn_df, prn_df_truth)
+    delta = np.linalg.norm(diff,axis=1)
     epochs = np.arange(0,len(prn_df_truth))
     fig,axs = plt.subplots(2,1)
     fig.suptitle('Comparison of NGA Truth and NGA Predicts \nPosition Vectors over 9 Days')
@@ -44,7 +45,7 @@ if args.prn is not None:
     axs[0].plot(epochs,rpred, label='predicted r')
     axs[0].set_ylabel('km')
     axs[0].legend()
-    axs[1].plot(epochs,delta*km_to_cm,label='delta r = predicted r - true r')
+    axs[1].plot(epochs,delta*km_to_cm,label='delta r = norm(predicted r - true r)')
     axs[1].set_ylabel('cm')
     axs[1].legend()
     axs[1].set_xlabel('15m epochs')
