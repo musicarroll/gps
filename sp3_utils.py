@@ -40,7 +40,7 @@ def get_df(filename):
     df = pd.read_csv(filename)
     df['r']= np.sqrt(df['x']**2+df['y']**2+df['z']**2)
     return df
-#    df['timestamp']=pd.to_datetime(df['timestamp'])
+    df['timestamp']=pd.to_datetime(df['timestamp'])
 #    df.set_index('timestamp', inplace=True)
 
 def filter_df_for_prn(df, prn):
