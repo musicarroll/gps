@@ -19,6 +19,15 @@ Created on Wed Mar  2 17:40:28 2022
         Note: Currently there are only a maximum of 62 days of training data available
         on the github site.  More can be downloaded from NGA and preprocessed with
         readeph.py if desired.
+    Pysindy citation:
+        Brian M. de Silva, Kathleen Champion, Markus Quade, Jean-Christophe Loiseau, 
+        J. Nathan Kutz, and Steven L. Brunton., (2020). 
+        PySINDy: A Python package for the sparse identification of nonlinear dynamical 
+        systems from data. Journal of Open Source Software, 5(49), 2104, 
+        https://doi.org/10.21105/joss.02104
+        Kaptanoglu et al., (2022). PySINDy: A comprehensive Python package for robust 
+        sparse system identification. Journal of Open Source Software, 7(69), 3994, 
+        https://doi.org/10.21105/joss.03994
     Status:
         2022-03-04:  Can achieve 55 m MSE performance which seems worse than NGA's 
         9-day predict RSS error of around 25 m.  
