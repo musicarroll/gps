@@ -2,7 +2,12 @@
 # -*- coding: utf-8 -*-
 """
 Created on Tue Mar  1 19:38:16 2022
-
+    compare_predicts.py
+    Compares NGA 9-day predicts against NGA public truth (Precise Ephemeris=PE)
+    after the fact.
+    Data derived from NGA Geomatics downloads from
+    https://earth-info.nga.mil/index.php?dir=gnss&action=gnss
+    Github site of pre-processed data: https://github.com/musicarroll/gps
 @author: mcarroll
 """
 
