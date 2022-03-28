@@ -80,7 +80,7 @@ if args.prn is not None:
     train_ts = pd.to_datetime(args.train_ts)
     if args.num_train_days is not None:
         num_train_days = int(args.num_train_days)
-        train_start_ts = train_ts - pd.Timedelta(num_train_days,'days')
+        train_start_ts = pd.to_datetime(train_ts - pd.Timedelta(num_train_days,'days'))
         train_filt = (prn_df['timestamp']>train_start_ts) & (prn_df['timestamp']<train_ts)
     else:
         train_filt = (prn_df['timestamp']<train_ts)
@@ -126,7 +126,7 @@ if args.prn is not None:
 #    model.fit(trainer.values, t=t_train)
 
 # Scoring:
-    train_days = round(len(train_df)/288,2)
+    train_days = num_train_days
     test_days = round(len(test_df)/288,2)
     print('\n')
     print('Space Vehicle:  PRN ',args.prn)
