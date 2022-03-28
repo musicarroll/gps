@@ -137,12 +137,13 @@ if args.prn is not None:
     score = model.score(test_df[['x','y','z','t']].values, t=t_test,\
                         x_dot=vel_test.values,\
                             metric=sklearn.metrics.mean_squared_error)
-    score_km = round(score,4)
-    score_m = round(score*1000,4)
-    score_cm = round(score*km_to_cm,4)
-    print(f'\nModel Score (MSE): {score_km} km')
-    print(f'\nModel Score (MSE): {score_m} m')
-    print(f'\nModel Score (MSE): {score_cm} cm')
+    rmse = np.sqrt(score)
+    score_km = round(rmse,4)
+    score_m = round(rmse*1000,4)
+    score_cm = round(rmse*km_to_cm,4)
+    print(f'\nModel Score (RMSE): {score_km} km')
+    print(f'\nModel Score (RMSE): {score_m} m')
+    print(f'\nModel Score (RMSE): {score_cm} cm')
     # x0_test = np.asarray(test_df.iloc[0][['x','y','z','t']])
     # test_sim = model.simulate(x0_test, t_test)  # Takes forever then craps out due to NAN's or something
     
