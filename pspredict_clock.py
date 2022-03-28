@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Mar  2 17:40:28 2022
-    pspredict.py
+    pspredict_clock.py
     Using pysindy to derive a model of GPS ephemeris dynamics.
     Goal is to generate a model that predicts more accurately than
     the NGA 9-day orbit ephemeris.  (See compare_predicts.py for an assessment of the
@@ -29,14 +29,10 @@ Created on Wed Mar  2 17:40:28 2022
         sparse system identification. Journal of Open Source Software, 7(69), 3994, 
         https://doi.org/10.21105/joss.03994
     Status:
-        2022-03-04:  Can achieve 55 m MSE performance which seems worse than NGA's 
-        9-day predict RSS error of around 25 m.  
-        Some things to try:  Need to play around with customer 
-        pysindy libraries and optimizer settings to see if this can be improved.
-        Also may get better results using constrained optimization, constraining the
-        derivatives of x,y,z to be the empirically provided v_x,v_y,v_z, but have
-        six state space variables:  x,y,z,v_x,v_y,v_z.
-        Could also try to include the clock and clock rate variables t and v_t.
+        2022-03-05:  Added clock and clock rate variables t and v_t to the model 
+        originally coded up in pspredict.py.  Results are now MSE 35 m, whereas 
+        before they were on the order of 45 (after some tuning advice from 
+        Alan Kaptanoglu.)
 @author: mcarroll
 """
 
@@ -51,7 +47,7 @@ import argparse as ap
 
 parser = ap.ArgumentParser()
 parser.add_argument('infile', help='Input file:  Required!!!')
-parser.add_argument('predicts', help='Predicts input file. Required!!!')
+#parser.add_argument('predicts', help='Predicts input file. Required!!!')
 parser.add_argument('--prn', help='Specific PRN to look at.')
 parser.add_argument('--train_ts', help='Last timestamp of training data.')
 parser.add_argument('--test_ts', help='Last timestamp of test data.')
@@ -63,14 +59,18 @@ microsec_to_sec = 1e-6
 speed_of_light_m_per_sec = 299_792_458
 m_to_km = 1e-3
 dm_to_m = 1e-1
+dm_per_sec_to_km_per_sec = 1/10000
 
 if args.infile is not None:
     df = su.get_df(args.infile)    
-if args.predicts is not None:
-    predicts = su.get_df(args.predicts)
+# if args.predicts is not None:
+#     predicts = su.get_df(args.predicts)
 
 df['timestamp']=pd.to_datetime(df['timestamp'])
- 
+df[['v_x','v_y','v_z']]= df[['v_x','v_y','v_z']]*dm_per_sec_to_km_per_sec
+df['v_t']= df['v_t']* speed_of_light_m_per_sec * microsec_to_sec * m_to_km # km/s 
+df['t'] = df['t'] * speed_of_light_m_per_sec * microsec_to_sec * m_to_km # km 
+
 # ngapts = np.array(predicts['timestamp'])
 # filt = df['timestamp'].isin(ngapts)
 # df_truth = df[filt]
@@ -99,16 +99,11 @@ if args.prn is not None:
 # Derivatives:  Pre-computed, default or from NGA velocity estimates:
 #    x_dot_precomputed = ps.FiniteDifference()._differentiate(trainer.values, t_train)
 
-    dm_per_sec_to_km_per_sec = 1/10000
 
-    vel_train = train_df[['v_x','v_y','v_z']] * dm_per_sec_to_km_per_sec
-    vel_train['v_t'] = train_df['v_t'] * speed_of_light_m_per_sec * microsec_to_sec * m_to_km # km/s
-    train_df['t'] = train_df['t'] * speed_of_light_m_per_sec * microsec_to_sec * m_to_km # km   
+    vel_train = train_df[['v_x','v_y','v_z','v_t']]
     
-    vel_test = test_df[['v_x','v_y','v_z']] * dm_per_sec_to_km_per_sec
-    vel_test['v_t'] = test_df['v_t'] * speed_of_light_m_per_sec * microsec_to_sec * m_to_km   # km/s
-    test_df['t'] = test_df['t'] * speed_of_light_m_per_sec * microsec_to_sec * m_to_km # km   
-
+    vel_test = test_df[['v_x','v_y','v_z','v_t']] 
+ 
 # Function Libraries:
     fourier_library = ps.FourierLibrary(n_frequencies=2)
 #    identity_library = ps.IdentityLibrary()
@@ -148,8 +143,7 @@ if args.prn is not None:
     print(f'\nModel Score (MSE): {score_km} km')
     print(f'\nModel Score (MSE): {score_m} m')
     print(f'\nModel Score (MSE): {score_cm} cm')
-    last_train_loc = 661801
-    # x0_test = np.array([test_df.loc[last_train_loc]['x'],test_df.loc[last_train_loc]['y'],test_df.loc[last_train_loc]['z']])
+    # x0_test = np.asarray(test_df.iloc[0][['x','y','z','t']])
     # test_sim = model.simulate(x0_test, t_test)  # Takes forever then craps out due to NAN's or something
     
  
